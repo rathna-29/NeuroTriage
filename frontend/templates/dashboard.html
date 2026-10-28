@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - NeuroTriage{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h1>Welcome, {{ full_name }}</h1>
+    <p class="subtitle">
+        Logged in as <strong>{{ role|capitalize }}</strong> ({{ user_id }}).
+        {% if role == 'doctor' %}
+            You can see all patient records.
+        {% else %}
+            You can see the patient records you created.
+        {% endif %}
+    </p>
+
+    <div class="actions">
+        <a href="{{ url_for('patients.add_patient') }}"
+           class="btn btn-primary btn-inline">+ Add Patient</a>
+
+        <a href="{{ url_for('patients.patient_list') }}"
+           class="btn btn-secondary">Patient Records</a>
+
+        <form method="post"
+              action="{{ url_for('export.export_excel') }}"
+              class="inline-form">
+            <input type="hidden" name="csrf_token"
+                   value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-secondary">
+                Export Excel
+            </button>
+        </form>
+    </div>
+
+    <p class="hint">
+        EEG upload and simulated monitoring are opened from each patient's page.
+    </p>
+</section>
+
+<section class="card spaced">
+    <h2 class="section-title">
+        Priority summary (AI-assisted, latest EEG analysis per patient)
+    </h2>
+
+    <div class="stat-row">
+        <div class="stat">
+            <div class="stat-num">{{ total_patients }}</div>
+            <div class="stat-label">Accessible patients</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-num">{{ summary['Higher Priority'] }}</div>
+            <div class="stat-label">Higher Priority</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-num">{{ summary['Moderate Priority'] }}</div>
+            <div class="stat-label">Moderate Priority</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-num">{{ summary['Lower Priority'] }}</div>
+            <div class="stat-label">Lower Priority</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-num">{{ no_analysis }}</div>
+            <div class="stat-label">No EEG analysis yet</div>
+        </div>
+    </div>
+
+    <p class="hint">
+        AI-assisted priority indications from a prototype trained on a
+        synthetic dataset. Labels use a provisional, project-defined mapping.
+        Simulated monitoring is not counted here.
+    </p>
+</section>
+
+<section class="card spaced">
+    <h2 class="section-title">Recent patient records</h2>
+
+    {% if recent_patients %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient ID</th>
+                    <th>Age</th>
+                    <th>Sex</th>
+                    <th>Priority</th>
+                    <th>Created (UTC)</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for p in recent_patients %}
+                <tr>
+                    <td>
+                        <a class="link"
+                           href="{{ url_for('patients.patient_detail', patient_id=p['id']) }}">
+                            <strong>{{ p['patient_code'] }}</strong>
+                        </a>
+                    </td>
+
+                    <td>{{ p['age'] }}</td>
+
+                    <td>{{ p['sex'] }}</td>
+
+                    <td>
+                        {% if p['priority_label'] %}
+                            {{ p['priority_label'] }}
+                        {% else %}
+                            <span class="muted">Not analysed</span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ p['created_at'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="muted">No patient records yet.</p>
+    {% endif %}
+</section>
+
+<section class="card spaced">
+    <h2 class="section-title">Recent EEG analysis</h2>
+
+    {% if recent_analyses %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>When (UTC)</th>
+                    <th>Patient</th>
+                    <th>AI-assisted priority indication</th>
+                    <th>Model class</th>
+                    <th>Model output probability</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for a in recent_analyses %}
+                <tr>
+                    <td>{{ a['created_at'] }}</td>
+                    <td>{{ a['patient_code'] }}</td>
+                    <td>{{ a['priority_label'] }}</td>
+                    <td>{{ a['predicted_class'] }}</td>
+                    <td>{{ '%.1f' % (a['probability'] * 100) }}%</td>
+                    <td>
+                        <a class="link"
+                           href="{{ url_for('eeg.prediction_result', patient_id=a['patient_id'], prediction_id=a['id']) }}">
+                            View
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="muted">No EEG analyses yet.</p>
+    {% endif %}
+</section>
+
+<section class="card spaced">
+    <h2 class="section-title">Monitoring status (SIMULATED)</h2>
+
+    <div class="sim-banner">
+        Simulated monitoring. Not connected to any medical device.
+    </div>
+
+    {% if monitoring %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Last simulated indication</th>
+                    <th>Step</th>
+                    <th>When (UTC)</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for m in monitoring %}
+                <tr>
+                    <td>{{ m['patient_code'] }}</td>
+                    <td>{{ m['priority_label'] }}</td>
+                    <td>{{ m['step_index'] + 1 }}</td>
+                    <td>{{ m['created_at'] }}</td>
+                    <td>
+                        <a class="link"
+                           href="{{ url_for('monitoring.monitoring_page', patient_id=m['patient_id']) }}">
+                            Open
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="muted">No simulated monitoring has been run yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

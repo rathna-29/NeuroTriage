@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}AI result - NeuroTriage{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h1>AI-assisted priority indication</h1>
+    <p class="subtitle">Patient {{ patient['patient_code'] }} &middot; {{ prediction['created_at'] }} (UTC) &middot; by {{ prediction['created_by_user'] }}</p>
+
+    <div class="result-box">
+        <div class="result-label">AI-assisted priority indication</div>
+        <div class="result-value">{{ prediction['priority_label']|upper }}</div>
+        <div class="result-sub">
+            Model class: <strong>{{ prediction['predicted_class'] }}</strong> &middot;
+            Model output probability: <strong>{{ '%.1f' % (prediction['probability'] * 100) }}%</strong>
+        </div>
+    </div>
+
+    <h2 class="section-title">Probability for each class</h2>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>Class</th><th>Model output probability</th></tr></thead>
+            <tbody>
+                {% for name, p in probabilities %}
+                <tr><td>{{ name }}</td><td>{{ '%.1f' % (p * 100) }}%</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="section-title">Data used by the model</h2>
+    <p>EEG features only (file: {{ prediction['original_filename'] }}). Vital signs and clinical information are stored for clinician review and are <strong>not</strong> used by the model.</p>
+
+    <div class="notice">
+        <strong>Important:</strong>
+        <ul>
+            <li>This is an AI-assisted clinical decision-support prototype. It is not a diagnosis and does not replace clinical judgment.</li>
+            <li>The model was trained on a synthetic EEG dataset. Its performance there says nothing about real patients.</li>
+            <li>The priority label comes from a provisional, project-defined mapping from the model class. It is not a clinical standard.</li>
+            <li>The probability is the model's raw output, not calibrated clinical confidence.</li>
+        </ul>
+    </div>
+
+    <p><a href="{{ url_for('patients.patient_detail', patient_id=patient['id']) }}" class="link">&larr; Back to patient</a></p>
+</section>
+{% endblock %}

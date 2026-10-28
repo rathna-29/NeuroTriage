@@ -1,0 +1,105 @@
+
+{% extends "base.html" %}
+
+{% block title %}Monitoring - NeuroTriage{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="sim-banner">
+        SIMULATED MONITORING. Not connected to any medical device. Measurements are
+        replayed from a synthetic dataset to demonstrate the workflow.
+    </div>
+
+    <h1>Monitoring: Patient {{ patient['patient_code'] }}</h1>
+
+    {% if latest %}
+    <div class="result-box">
+        <div class="result-label">Latest AI-assisted priority indication (simulated)</div>
+        <div class="result-value">{{ latest['priority_label']|upper }}</div>
+        <div class="result-sub">
+            Step {{ latest['step_index'] + 1 }} of {{ latest['run_length'] }} &middot;
+            {{ latest['scenario_name'] }} &middot; {{ latest['created_at'] }} (UTC)
+        </div>
+    </div>
+    {% endif %}
+
+    <form id="monitor-form" method="post"
+          action="{{ url_for('monitoring.monitoring_next', patient_id=patient['id']) }}"
+          class="monitor-controls">
+
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <label for="scenario">Scenario</label>
+        <select id="scenario" name="scenario">
+            {% for key, (name, sequence) in scenarios.items() %}
+                <option value="{{ key }}" {% if latest and latest['scenario'] == key %}selected{% endif %}>{{ name }} ({{ sequence|length }} steps)</option>
+            {% endfor %}
+        </select>
+
+        <div class="actions">
+            <button type="submit" class="btn btn-primary btn-inline">Next simulated measurement</button>
+            <button type="button" id="auto-btn" class="btn btn-secondary">Start auto-run (every 5 s)</button>
+        </div>
+    </form>
+
+    <h2 class="section-title">History (newest first)</h2>
+    {% if records %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>When (UTC)</th>
+                    <th>Step</th>
+                    <th>Simulated source</th>
+                    <th>AI-assisted priority indication</th>
+                    <th>Model class</th>
+                    <th>Model output probability</th>
+                    <th>Mean channel std</th>
+                    <th>Change vs previous (context only)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in records %}
+                <tr>
+                    <td>{{ r['created_at'] }}</td>
+                    <td>{{ r['step_index'] + 1 }}/{{ r['run_length'] }}</td>
+                    <td>{{ r['sim_source_class'] }}</td>
+                    <td>{{ r['priority_label'] }}</td>
+                    <td>{{ r['predicted_class'] }}</td>
+                    <td>{{ '%.1f' % (r['probability'] * 100) }}%</td>
+                    <td>{{ '%.3f' % r['mean_std'] }}</td>
+                    <td>
+                        {% if not r['has_previous'] %}
+                            first in this run
+                        {% elif r['priority_changed'] %}
+                            Priority indication changed: {{ r['previous_priority'] }} &rarr; {{ r['priority_label'] }};
+                            mean std {{ '%+.3f' % r['delta_std'] }}
+                        {% else %}
+                            No change in priority indication;
+                            mean std {{ '%+.3f' % r['delta_std'] }}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="muted">No simulated measurements yet. Click "Next simulated measurement".</p>
+    {% endif %}
+
+    <div class="notice">
+        <strong>Important:</strong>
+        <ul>
+            <li>This is an AI-assisted clinical decision-support prototype, not a diagnosis.</li>
+            <li>"Change vs previous" is context for clinician review. A change is not automatically a medical abnormality.</li>
+            <li>The simulated trials come from the dataset used to train the model, so these results demonstrate the workflow, not accuracy.</li>
+            <li>The priority label uses a provisional, project-defined mapping, not a clinical standard.</li>
+        </ul>
+    </div>
+
+    <p><a href="{{ url_for('patients.patient_detail', patient_id=patient['id']) }}" class="link">&larr; Back to patient</a></p>
+</section>
+
+<script src="{{ url_for('static', filename='js/monitoring.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,441 @@
+/* style.css - basic look for NeuroTriage */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.site-header {
+    background: #0f4c81;
+    color: #ffffff;
+    padding: 16px 32px;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.brand {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.tagline {
+    font-size: 0.9rem;
+    opacity: 0.85;
+}
+
+.container {
+    flex: 1;
+    max-width: 900px;
+    width: 100%;
+    margin: 32px auto;
+    padding: 0 16px;
+}
+
+.card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.card h1 {
+    margin-top: 0;
+    color: #0f4c81;
+}
+
+.subtitle {
+    color: #475569;
+    font-size: 1.1rem;
+}
+
+.status {
+    color: #15803d;
+    font-weight: 600;
+}
+
+.site-footer {
+    text-align: center;
+    padding: 16px;
+    font-size: 0.8rem;
+    color: #64748b;
+}
+/* ---------- Added in Step 5 ---------- */
+
+.site-header {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-right form {
+    margin: 0;
+}
+
+.user-info {
+    font-size: 0.9rem;
+}
+
+/* Buttons */
+.btn {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #0f4c81;
+    color: #ffffff;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.btn-primary:hover {
+    background: #0b3a63;
+}
+
+.btn-light {
+    background: #ffffff;
+    color: #0f4c81;
+    padding: 6px 14px;
+    font-size: 0.9rem;
+}
+
+/* Messages */
+.flash {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+.flash-error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.flash-success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+/* Login form */
+.login-card {
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+label {
+    display: block;
+    margin: 16px 0 6px;
+    font-weight: 600;
+}
+
+input[type="text"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #ffffff;
+}
+
+input:focus,
+select:focus {
+    outline: 2px solid #0f4c81;
+    border-color: #0f4c81;
+}
+/* ---------- Added in Step 6 ---------- */
+
+.page-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.btn-inline {
+    width: auto;
+    margin-top: 0;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.btn-secondary {
+    background: #e2e8f0;
+    color: #0f4c81;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-secondary:hover {
+    background: #cbd5e1;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 12px 0 20px;
+}
+
+.section-title {
+    margin-bottom: 4px;
+    font-size: 1.1rem;
+    color: #334155;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.search-form input[type="text"] {
+    max-width: 320px;
+}
+
+.link {
+    color: #0f4c81;
+}
+
+.muted {
+    color: #64748b;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+}
+
+th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+th {
+    background: #f8fafc;
+    color: #334155;
+    font-size: 0.9rem;
+}
+
+.form-card {
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+/* ---------- Added in Step 7 ---------- */
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 10px 16px;
+    margin: 20px 0;
+}
+
+.detail-grid dt {
+    font-weight: 600;
+    color: #475569;
+}
+
+.detail-grid dd {
+    margin: 0;
+}
+
+input:disabled {
+    background: #f1f5f9;
+    color: #64748b;
+    cursor: not-allowed;
+}
+/* ---------- Added in Step 8 ---------- */
+
+.hint {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 0;
+}
+
+th small {
+    font-weight: 400;
+    color: #64748b;
+}
+/* ---------- Added in Step 9 ---------- */
+
+textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+}
+
+textarea:focus {
+    outline: 2px solid #0f4c81;
+    border-color: #0f4c81;
+}
+
+.form-card.wide {
+    max-width: 640px;
+}
+
+.clinical-entry {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+}
+
+.clinical-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+/* Keep line breaks the user typed. */
+.pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+/* ---------- Added in Step 15 ---------- */
+
+input[type="file"] {
+    width: 100%;
+    padding: 10px 0;
+}
+
+.result-box {
+    background: #eff6ff;
+    border: 2px solid #0f4c81;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.result-label {
+    font-size: 0.9rem;
+    color: #475569;
+}
+
+.result-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0f4c81;
+    margin: 6px 0;
+}
+
+.result-sub {
+    color: #334155;
+}
+
+.notice {
+    background: #fffbeb;
+    border: 1px solid #f59e0b;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 16px 0;
+    font-size: 0.9rem;
+}
+
+.notice ul {
+    margin: 6px 0 0;
+    padding-left: 20px;
+}
+/* ---------- Added in Step 16 ---------- */
+
+.inline-form {
+    display: inline;
+    margin: 0;
+}
+/* ---------- Added in Step 17 ---------- */
+
+.sim-banner {
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    color: #92400e;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.monitor-controls {
+    max-width: 480px;
+    margin: 16px 0 24px;
+}
+/* ---------- Added in Step 18 ---------- */
+
+.card.spaced {
+    margin-top: 20px;
+}
+
+.stat-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin: 12px 0;
+}
+
+.stat {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+}
+
+.stat-num {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #0f4c81;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #475569;
+}

@@ -1,0 +1,27 @@
+
+{% extends "base.html" %}
+
+{% block title %}Upload EEG - NeuroTriage{% endblock %}
+
+{% block content %}
+<section class="card form-card wide">
+    <h1>Upload EEG</h1>
+    <p class="subtitle">Patient {{ patient['patient_code'] }}</p>
+    <p class="hint">
+        One CSV file = one EEG trial (one row) with 16 channels x 1024 samples
+        (columns ch1_s1 ... ch16_s1024), max 2 MB. Use synthetic/demo data only.
+        This is an AI-assisted clinical decision-support prototype.
+    </p>
+
+    <form method="post" enctype="multipart/form-data"
+          action="{{ url_for('eeg.upload_eeg', patient_id=patient['id']) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <label for="eeg_file">EEG CSV file</label>
+        <input type="file" id="eeg_file" name="eeg_file" required>
+        <button type="submit" class="btn btn-primary">Upload and analyse</button>
+    </form>
+
+    <p><a href="{{ url_for('patients.patient_detail', patient_id=patient['id']) }}" class="link">&larr; Cancel</a></p>
+</section>
+{% endblock %}

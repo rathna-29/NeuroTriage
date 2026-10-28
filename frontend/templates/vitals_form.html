@@ -1,0 +1,52 @@
+
+{% extends "base.html" %}
+
+{% block title %}Vital signs - NeuroTriage{% endblock %}
+
+{% block content %}
+{% if mode == 'edit' %}
+    {% set action_url = url_for('vitals.edit_vitals', patient_id=patient['id'], vital_id=vital_id) %}
+{% else %}
+    {% set action_url = url_for('vitals.add_vitals', patient_id=patient['id']) %}
+{% endif %}
+
+<section class="card form-card">
+    <h1>{% if mode == 'edit' %}Edit{% else %}Add{% endif %} vital signs</h1>
+    <p class="subtitle">Patient {{ patient['patient_code'] }}</p>
+    <p class="hint">Entry limits only catch typing mistakes. They are not clinical thresholds.</p>
+
+    <form method="post" action="{{ action_url }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <label for="heart_rate">Heart rate (beats/min)</label>
+        <input type="number" id="heart_rate" name="heart_rate" min="20" max="300"
+               value="{{ form.get('heart_rate', '') }}" required>
+
+        <label for="systolic_bp">Systolic blood pressure (mmHg)</label>
+        <input type="number" id="systolic_bp" name="systolic_bp" min="40" max="300"
+               value="{{ form.get('systolic_bp', '') }}" required>
+
+        <label for="diastolic_bp">Diastolic blood pressure (mmHg)</label>
+        <input type="number" id="diastolic_bp" name="diastolic_bp" min="20" max="200"
+               value="{{ form.get('diastolic_bp', '') }}" required>
+
+        <label for="spo2">SpO2 (%)</label>
+        <input type="number" id="spo2" name="spo2" min="50" max="100"
+               value="{{ form.get('spo2', '') }}" required>
+
+        <label for="temperature_c">Temperature (°C)</label>
+        <input type="number" id="temperature_c" name="temperature_c" min="25" max="45" step="0.1"
+               value="{{ form.get('temperature_c', '') }}" required>
+
+        <label for="respiratory_rate">Respiratory rate (breaths/min) - optional</label>
+        <input type="number" id="respiratory_rate" name="respiratory_rate" min="4" max="80"
+               value="{{ form.get('respiratory_rate') or '' }}">
+
+        <button type="submit" class="btn btn-primary">
+            {% if mode == 'edit' %}Save changes{% else %}Save vital signs{% endif %}
+        </button>
+    </form>
+
+    <p><a href="{{ url_for('patients.patient_detail', patient_id=patient['id']) }}" class="link">&larr; Cancel</a></p>
+</section>
+{% endblock %}

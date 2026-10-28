@@ -1,0 +1,33 @@
+
+{% extends "base.html" %}
+
+{% block title %}Edit Patient {{ patient['patient_code'] }} - NeuroTriage{% endblock %}
+
+{% block content %}
+<section class="card form-card">
+    <h1>Edit Patient {{ patient['patient_code'] }}</h1>
+    <p class="subtitle">The Patient ID cannot be changed. Every change is recorded in the change history.</p>
+
+    <form method="post" action="{{ url_for('patients.edit_patient', patient_id=patient['id']) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <label for="patient_code">Patient ID</label>
+        <input type="text" id="patient_code" value="{{ patient['patient_code'] }}" disabled>
+
+        <label for="age">Age (years)</label>
+        <input type="number" id="age" name="age" min="0" max="120"
+               value="{{ form['age'] }}" required>
+
+        <label for="sex">Sex</label>
+        <select id="sex" name="sex" required>
+            {% for option in ['Male', 'Female', 'Other', 'Not recorded'] %}
+                <option value="{{ option }}" {% if form['sex'] == option %}selected{% endif %}>{{ option }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="btn btn-primary">Save changes</button>
+    </form>
+
+    <p><a href="{{ url_for('patients.patient_detail', patient_id=patient['id']) }}" class="link">&larr; Cancel</a></p>
+</section>
+{% endblock %}

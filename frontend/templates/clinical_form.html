@@ -1,0 +1,45 @@
+
+{% extends "base.html" %}
+
+{% block title %}Clinical information - NeuroTriage{% endblock %}
+
+{% block content %}
+{% if mode == 'edit' %}
+    {% set action_url = url_for('clinical.edit_clinical', patient_id=patient['id'], record_id=record_id) %}
+{% else %}
+    {% set action_url = url_for('clinical.add_clinical', patient_id=patient['id']) %}
+{% endif %}
+
+<section class="card form-card wide">
+    <h1>{% if mode == 'edit' %}Edit{% else %}Add{% endif %} clinical information</h1>
+    <p class="subtitle">Patient {{ patient['patient_code'] }}</p>
+    <p class="hint">Use synthetic/demo text only. Describe what was observed, not a diagnosis.</p>
+
+    <form method="post" action="{{ action_url }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <label for="symptoms">Symptoms (required)</label>
+        <textarea id="symptoms" name="symptoms" rows="3" maxlength="1000" required>{{ form.get('symptoms') or '' }}</textarea>
+
+        <label for="symptom_onset">Symptom onset (optional)</label>
+        <input type="text" id="symptom_onset" name="symptom_onset" maxlength="100"
+               placeholder="e.g. about 2 hours ago"
+               value="{{ form.get('symptom_onset') or '' }}">
+
+        <label for="medical_history">Medical history (optional)</label>
+        <textarea id="medical_history" name="medical_history" rows="3" maxlength="1000">{{ form.get('medical_history') or '' }}</textarea>
+
+        <label for="existing_conditions">Existing conditions (optional)</label>
+        <textarea id="existing_conditions" name="existing_conditions" rows="2" maxlength="500">{{ form.get('existing_conditions') or '' }}</textarea>
+
+        <label for="clinical_observations">Clinical observations (optional)</label>
+        <textarea id="clinical_observations" name="clinical_observations" rows="3" maxlength="1000">{{ form.get('clinical_observations') or '' }}</textarea>
+
+        <button type="submit" class="btn btn-primary">
+            {% if mode == 'edit' %}Save changes{% else %}Save clinical information{% endif %}
+        </button>
+    </form>
+
+    <p><a href="{{ url_for('patients.patient_detail', patient_id=patient['id']) }}" class="link">&larr; Cancel</a></p>
+</section>
+{% endblock %}

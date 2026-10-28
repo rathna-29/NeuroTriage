@@ -1,0 +1,56 @@
+
+.env
+.env.*
+!.env.example
+
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+dataset/
+*.db
+
+# Python virtual environment
+venv/
+
+# Environment variables and secrets
+.env
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Local database files
+backend/database/*.db
+
+# Uploaded and exported data
+backend/uploads/*.csv
+backend/exports/*.xlsx
+
+# Trained machine-learning artifacts
+backend/ml/model.joblib
+backend/ml/sim_pool.npz
+
+# Local datasets and sample data
+dataset/*.csv
+dataset/samples/
+# Additional Python and local files
+.venv/
+*.db
+__pycache__/
+
+
+# Ignore local patient data and generated files
+backend/database/
+backend/uploads/
+backend/exports/
+
+# Ignore model artifacts and backups
+backend/ml/*.joblib
+backend/ml/*.npz
+backend/ml/*backup*
+
+# Ignore Python cache directories
+**/__pycache__/
+backend/ml/*backup*

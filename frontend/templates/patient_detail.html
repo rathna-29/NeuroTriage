@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block title %}Patient {{ patient['patient_code'] }} - NeuroTriage{% endblock %}
+
+{% block content %}
+<section class="card">
+
+    <div class="page-head">
+        <div>
+            <h1>Patient {{ patient['patient_code'] }}</h1>
+            <p class="subtitle">Patient details and monitoring information</p>
+        </div>
+
+        <a href="{{ url_for('patients.edit_patient', patient_id=patient['id']) }}"
+           class="btn btn-secondary">
+            Edit patient
+        </a>
+    </div>
+
+    <h2 class="section-title">Patient details</h2>
+
+    <dl class="detail-grid">
+        <dt>Patient ID</dt>
+        <dd>{{ patient['patient_code'] }}</dd>
+
+        <dt>Age</dt>
+        <dd>{{ patient['age'] }}</dd>
+
+        <dt>Sex</dt>
+        <dd>{{ patient['sex'] or '-' }}</dd>
+
+        <dt>Created by</dt>
+        <dd>{{ patient['created_by_user'] }}</dd>
+
+        <dt>Created at</dt>
+        <dd>{{ patient['created_at'] }} (UTC)</dd>
+    </dl>
+
+
+    <!-- VITAL SIGNS -->
+
+    <div class="page-head">
+        <h2 class="section-title">Vital signs</h2>
+
+        <a href="{{ url_for('vitals.add_vitals', patient_id=patient['id']) }}"
+           class="btn btn-secondary">
+            + Add vital signs
+        </a>
+    </div>
+
+    {% if vitals %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Recorded at</th>
+                        <th>Recorded by</th>
+                        <th>Heart rate</th>
+                        <th>BP</th>
+                        <th>SpO2</th>
+                        <th>Temperature</th>
+                        <th>Respiratory rate</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for v in vitals %}
+                    <tr>
+                        <td>{{ v['recorded_at'] }} (UTC)</td>
+                        <td>{{ v['recorded_by_user'] }}</td>
+                        <td>{{ v['heart_rate'] }} bpm</td>
+                        <td>{{ v['systolic_bp'] }}/{{ v['diastolic_bp'] }}</td>
+                        <td>{{ v['spo2'] }}%</td>
+                        <td>{{ v['temperature_c'] }} °C</td>
+                        <td>{{ v['respiratory_rate'] or '-' }}</td>
+                        <td>
+                            <a class="link"
+                               href="{{ url_for('vitals.edit_vitals',
+                                                patient_id=patient['id'],
+                                                vital_id=v['id']) }}">
+                                Edit
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="muted">No vital signs recorded yet.</p>
+    {% endif %}
+
+
+    <!-- CLINICAL INFORMATION -->
+
+    <div class="page-head">
+        <h2 class="section-title">Clinical information</h2>
+
+        <a href="{{ url_for('clinical.add_clinical', patient_id=patient['id']) }}"
+           class="btn btn-secondary">
+            + Add clinical information
+        </a>
+    </div>
+
+    {% if clinical %}
+        {% for c in clinical %}
+        <div class="clinical-entry">
+
+            <div class="clinical-head">
+                <span>
+                    {{ c['recorded_at'] }} (UTC)
+                    &middot;
+                    by {{ c['recorded_by_user'] }}
+                </span>
+
+                <a class="link"
+                   href="{{ url_for('clinical.edit_clinical',
+                                    patient_id=patient['id'],
+                                    record_id=c['id']) }}">
+                    Edit
+                </a>
+            </div>
+
+            <dl class="detail-grid">
+
+                <dt>Symptoms</dt>
+                <dd class="pre">{{ c['symptoms'] }}</dd>
+
+                <dt>Symptom onset</dt>
+                <dd class="pre">{{ c['symptom_onset'] or '-' }}</dd>
+
+                <dt>Medical history</dt>
+                <dd class="pre">{{ c['medical_history'] or '-' }}</dd>
+
+                <dt>Existing conditions</dt>
+                <dd class="pre">{{ c['existing_conditions'] or '-' }}</dd>
+
+                <dt>Clinical observations</dt>
+                <dd class="pre">{{ c['clinical_observations'] or '-' }}</dd>
+
+            </dl>
+
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="muted">No clinical information recorded yet.</p>
+    {% endif %}
+
+
+    <div class="page-head">
+    <h2 class="section-title">EEG analyses (AI-assisted)</h2>
+
+    <a href="{{ url_for('monitoring.monitoring_page', patient_id=patient['id']) }}"
+        class="btn btn-secondary">
+        Simulated monitoring
+    </a>
+
+    <a href="{{ url_for('eeg.upload_eeg', patient_id=patient['id']) }}"
+       class="btn btn-secondary">
+        + Upload EEG
+    </a>
+</div>
+
+{% if predictions %}
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>When (UTC)</th>
+                <th>AI-assisted priority indication</th>
+                <th>Model class</th>
+                <th>Model output probability</th>
+                <th>By</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for p in predictions %}
+            <tr>
+                <td>{{ p['created_at'] }}</td>
+
+                <td>{{ p['priority_label'] }}</td>
+
+                <td>{{ p['predicted_class'] }}</td>
+
+                <td>
+                    {{ '%.1f' % (p['probability'] * 100) }}%
+                </td>
+
+                <td>{{ p['created_by_user'] }}</td>
+
+                <td>
+                    <a class="link"
+                       href="{{ url_for(
+                           'eeg.prediction_result',
+                           patient_id=patient['id'],
+                           prediction_id=p['id']
+                       ) }}">
+                        View
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+
+<p class="muted">No EEG analyses yet.</p>
+
+{% endif %}
+
+
+    <!-- CHANGE HISTORY -->
+
+    <h2 class="section-title">Change history</h2>
+
+    {% if history %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Changed at</th>
+                        <th>Changed by</th>
+                        <th>Field</th>
+                        <th>Old value</th>
+                        <th>New value</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in history %}
+                    <tr>
+                        <td>{{ item['changed_at'] }} (UTC)</td>
+                        <td>{{ item['changed_by_user'] }}</td>
+                        <td>{{ item['field_name'] }}</td>
+                        <td>{{ item['old_value'] }}</td>
+                        <td>{{ item['new_value'] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="muted">No changes recorded yet.</p>
+    {% endif %}
+
+
+    <p>
+        <a href="{{ url_for('patients.patient_list') }}" class="link">
+            &larr; Back to patients
+        </a>
+    </p>
+
+</section>
+{% endblock %}

@@ -1,0 +1,30 @@
+
+{% extends "base.html" %}
+
+{% block title %}Login - NeuroTriage{% endblock %}
+
+{% block content %}
+<section class="card login-card">
+    <h1>Login</h1>
+    <p class="subtitle">Authorized doctors and clinicians only</p>
+
+    <form method="post" action="{{ url_for('auth.login') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <label for="user_id">User ID</label>
+        <input type="text" id="user_id" name="user_id" autocomplete="username" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="current-password" required>
+
+        <label for="role">Role</label>
+        <select id="role" name="role" required>
+            <option value="">-- Select role --</option>
+            <option value="doctor">Doctor</option>
+            <option value="clinician">Clinician</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary">Log in</button>
+    </form>
+</section>
+{% endblock %}
